@@ -1,0 +1,161 @@
+name: Creează lansare de tip draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      increment_type:
+        description: "Tipul de incrementare al versiunii (major/minor/patch)"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Creează lansare de tip draft
+    runs-on: ubuntu-22.04
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Set up Node.js (pentru build)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # 3. Calculează versiunea nouă
+      - name: Calculează versiunea nouă
+        id: version
+        run: |
+          # Citește versiunea curentă din package.json
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Versiune curentă: $VERSION"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          INCREMENT_TYPE="${{ github.event.inputs.increment_type }}"
+          echo "Tip incrementare: $INCREMENT_TYPE"
+
+          if [ "$INCREMENT_TYPE" = "major" ]; then
+            MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
+          elif [ "$INCREMENT_TYPE" = "minor" ]; then
+            MINOR=$((MINOR + 1)); PATCH=0
+          elif [ "$INCREMENT_TYPE" = "patch" ]; then
+            PATCH=$((PATCH + 1))
+          fi
+
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "Versiune nouă: $NEW_VERSION"
+
+          echo "old_version=$VERSION" >> $GITHUB_ENV
+          echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
+
+      # 4. Actualizează versiunea în package.json și constants.js
+      - name: Actualizează versiunea
+        run: |
+          # package.json
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.version = '${{ env.new_version }}';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+          # src/constants.js — VEHICULE_CARD_VERSION
+          sed -i "s/const VEHICULE_CARD_VERSION = '.*'/const VEHICULE_CARD_VERSION = '${{ env.new_version }}'/" src/constants.js
+
+          echo "✅ Versiunea actualizată în package.json și constants.js"
+          grep "version" package.json
+          grep "VEHICULE_CARD_VERSION" src/constants.js
+
+      # 5. Build — generează dist/vehicule-card.js
+      - name: Build vehicule-card.js
+        run: |
+          node build.js
+          echo "✅ Build complet"
+          ls -la dist/vehicule-card.js
+
+      # 6. Generează body-ul release-ului
+      - name: Generează release body
+        run: |
+          NEW_VERSION="${{ env.new_version }}"
+          OLD_VERSION="${{ env.old_version }}"
+
+          # Commit-uri de la ultima versiune
+          if git tag -l "${OLD_VERSION}" | grep -q .; then
+            COMMITS=$(git log "${OLD_VERSION}..HEAD" --oneline --no-merges --pretty=format:"- %s" | head -20)
+          else
+            COMMITS="- Prima lansare"
+          fi
+
+          cat > /tmp/release_body.md << ENDOFBODY
+          ## Vehicule Card ${NEW_VERSION}
+
+          ### Modificări
+
+          ${COMMITS}
+
+          ---
+
+          ### Instalare
+
+          **HACS (recomandat):** Frontend → + → Repository: \`cnecrea/vehicule-card\`
+
+          **Manual:** Descărcați \`vehicule-card.js\` din Assets și copiați-l în \`/config/www/vehicule-card.js\`
+
+          ---
+
+          ### Configurare
+
+          \`\`\`yaml
+          type: custom:vehicule-card
+          \`\`\`
+
+          Necesită: [button-card](https://github.com/custom-cards/button-card), [stack-in-card](https://github.com/custom-cards/stack-in-card), [bubble-card](https://github.com/Clooos/Bubble-Card), [card-mod](https://github.com/thomasloven/lovelace-card-mod), [mini-graph-card](https://github.com/kalkih/mini-graph-card)
+
+          ---
+
+          Dacă **Vehicule Card** îți este util, lasă un ⭐ pe repository — îi ajută și pe alți utilizatori să-l descopere.
+
+          💛 [Buy Me a Coffee](https://www.buymeacoffee.com/cnecrea) · 💰 [GitHub Sponsors](https://github.com/sponsors/cnecrea)
+          ENDOFBODY
+
+          # Curăță indentarea heredoc
+          sed -i 's/^          //' /tmp/release_body.md
+
+          echo "✅ Release body generat"
+          cat /tmp/release_body.md
+
+      # 7. Commit și push versiunea actualizată + build
+      - name: Commit și push
+        run: |
+          git config user.name "vehicule-card-bot"
+          git config user.email "vehicule-card-bot@users.noreply.github.com"
+
+          git add package.json src/constants.js dist/vehicule-card.js
+          git commit -m "Release ${{ env.new_version }}"
+          git push origin HEAD
+
+      # 8. Creează release-ul draft
+      #    Asset principal: vehicule-card.js (HACS îl descarcă direct din release)
+      - name: Creează GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "${{ env.new_version }}"
+          name: "${{ env.new_version }}"
+          body_path: /tmp/release_body.md
+          files: dist/vehicule-card.js
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
