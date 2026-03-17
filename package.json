@@ -1,6 +1,6 @@
 {
   "name": "vehicule-card",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Meta-card pentru integrarea Vehicule — folosește button-card, stack-in-card, bubble-card, card-mod, mini-graph-card",
   "main": "dist/vehicule-card.js",
   "scripts": {
