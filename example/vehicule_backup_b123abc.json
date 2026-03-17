@@ -1,0 +1,98 @@
+{
+  "version": 2,
+  "integration": "vehicule",
+  "nr_inmatriculare": "B123ABC",
+  "data_export": "2026-03-17T12:00:00.000000",
+  "identificare": {
+    "marca": "Volkswagen",
+    "model": "Golf",
+    "vin": "WVWZZZ1KZAM012345",
+    "serie_civ": "X009876543C",
+    "an_fabricatie": 2018,
+    "an_prima_inmatriculare": 2018,
+    "motorizare": "1.5 TSI",
+    "combustibil": "benzina",
+    "capacitate_cilindrica": 1498.0,
+    "putere_kw": 110.0,
+    "putere_cp": 150.0
+  },
+  "kilometraj": {
+    "km_curent": 87350.0
+  },
+  "asigurari": {
+    "rca": {
+      "numar_polita": "RCA-2026-445566",
+      "companie": "Euroins",
+      "data_emitere": "2025-08-01",
+      "data_expirare": "2026-08-01",
+      "cost": 1870.0
+    },
+    "casco": {
+      "numar_polita": "CASCO-778899",
+      "companie": "Groupama",
+      "data_emitere": "2025-09-15",
+      "data_expirare": "2026-09-15",
+      "cost": 3200.0
+    }
+  },
+  "documente": {
+    "itp": {
+      "data_expirare": "2026-12-15",
+      "statie": "TÜV Auto Titan",
+      "kilometraj": 82000.0
+    },
+    "rovinieta": {
+      "data_inceput": "2026-01-10",
+      "data_sfarsit": "2027-01-09",
+      "categorie": "A",
+      "pret": 152.0
+    }
+  },
+  "administrativ": {
+    "proprietar": "Mihai Popescu",
+    "tip_proprietate": "proprietate",
+    "impozit_suma": 210.0,
+    "impozit_scadenta": "2027-03-31",
+    "impozit_localitate": "București",
+    "leasing_data_expirare": null
+  },
+  "mentenanta": {
+    "revizie_ulei": {
+      "km_ultimul": 75000.0,
+      "km_urmator": 90000.0,
+      "data": "2025-11-20",
+      "cost": 850.0
+    },
+    "distributie": {
+      "km_ultimul": 60000.0,
+      "km_urmator": 120000.0,
+      "data": "2025-06-10",
+      "cost": 2800.0
+    },
+    "anvelope": {
+      "data_vara": "2026-03-15"
+    },
+    "baterie": {
+      "data_schimb": "2024-10-05",
+      "cost": 750.0
+    },
+    "frane": {
+      "placute_km_ultimul": 70000.0,
+      "placute_km_urmator": 100000.0,
+      "placute_data": "2025-09-01",
+      "placute_cost": 450.0,
+      "discuri_km_ultimul": 70000.0,
+      "discuri_km_urmator": 100000.0,
+      "discuri_data": "2025-09-01",
+      "discuri_cost": 900.0
+    }
+  },
+  "echipament": {
+    "trusa_prim_ajutor": {
+      "data_expirare": "2028-06-15"
+    },
+    "extinctor": {
+      "data_expirare": "2030-03-01"
+    }
+  }
+}

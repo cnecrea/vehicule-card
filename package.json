@@ -1,0 +1,17 @@
+{
+  "name": "vehicule-card",
+  "version": "0.0.0",
+  "description": "Meta-card pentru integrarea Vehicule — folosește button-card, stack-in-card, bubble-card, card-mod, mini-graph-card",
+  "main": "dist/vehicule-card.js",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cnecrea/vehicule-card"
+  },
+  "author": "Ciprian Nicolae",
+  "license": "MIT",
+  "devDependencies": {}
+}
