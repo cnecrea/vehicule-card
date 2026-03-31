@@ -305,7 +305,11 @@
           "vizite": 64,
           "vizitatori_unici": 35
         }
-      ]
+      ],
+      "clones_total": 7,
+      "clones_unice": 7,
+      "views_total": 5,
+      "views_unice": 4
     },
     "2026-03-31": {
       "stars": 3,
@@ -315,8 +319,8 @@
       "referrers": [
         {
           "sursa": "github.com",
-          "vizite": 69,
-          "vizitatori_unici": 39
+          "vizite": 74,
+          "vizitatori_unici": 43
         }
       ]
     }
@@ -325,5 +329,5 @@
     "1.1.0": 14,
     "1.0.0": 1
   },
-  "ultima_actualizare": "2026-03-31T00:06:55Z"
+  "ultima_actualizare": "2026-03-31T07:01:25Z"
 }
