@@ -28,7 +28,7 @@ Următoarele carduri trebuie instalate din [HACS](https://hacs.xyz/):
 
 ### HACS (recomandat)
 
-1. HACS → Frontend → **+** → Repository: `https://github.com/cnecrea/vehicule-card`
+1. HACS → Dashboard → **+** → Repository: `https://github.com/cnecrea/vehicule-card`
 2. Instalați **Vehicule Card**
 3. Reporniți Home Assistant
 4. Adăugați resursa (dacă nu se adaugă automat):
