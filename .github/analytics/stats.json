@@ -457,10 +457,28 @@
           "vizitatori_unici": 1
         }
       ]
+    },
+    "2026-04-08": {
+      "stars": 5,
+      "forks": 0,
+      "watchers": 0,
+      "open_issues": 0,
+      "referrers": [
+        {
+          "sursa": "github.com",
+          "vizite": 147,
+          "vizitatori_unici": 88
+        },
+        {
+          "sursa": "Google",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        }
+      ]
     }
   },
   "releases": {
-    "1.2.0": 10
+    "1.2.0": 15
   },
-  "ultima_actualizare": "2026-04-07T07:04:00Z"
+  "ultima_actualizare": "2026-04-08T07:05:55Z"
 }
