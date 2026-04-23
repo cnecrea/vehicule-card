@@ -771,11 +771,28 @@
           "vizite": 57,
           "vizitatori_unici": 31
         }
+      ],
+      "clones_total": 22,
+      "clones_unice": 8,
+      "views_total": 2,
+      "views_unice": 2
+    },
+    "2026-04-23": {
+      "stars": 5,
+      "forks": 0,
+      "watchers": 0,
+      "open_issues": 0,
+      "referrers": [
+        {
+          "sursa": "github.com",
+          "vizite": 55,
+          "vizitatori_unici": 31
+        }
       ]
     }
   },
   "releases": {
-    "1.2.0": 43
+    "1.2.0": 45
   },
-  "ultima_actualizare": "2026-04-22T07:19:30Z"
+  "ultima_actualizare": "2026-04-23T07:21:16Z"
 }
