@@ -19,6 +19,7 @@ class VehiculeCardEditor extends HTMLElement {
     const vehicule = descoperiVehicule(this._hass);
     const current = this._config.vehicul || '';
     const sectiuni = this._config.sectiuni || SECTIUNI;
+    const showPlate = this._config.show_plate_in_separators === true;
 
     this.innerHTML = `
       <div style="padding:16px;">
@@ -42,6 +43,16 @@ class VehiculeCardEditor extends HTMLElement {
             </label>
           `).join('')}
         </div>
+
+        <div style="margin-bottom:8px;">
+          <label style="display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer;">
+            <input type="checkbox" id="vc-show-plate" ${showPlate ? 'checked' : ''}>
+            <span>Afișează nr. înmatriculare în titlurile secțiunilor</span>
+          </label>
+          <div style="font-size:12px;color:var(--secondary-text-color);margin-top:4px;margin-left:24px;">
+            Util când ascundeți secțiunea „Informații" dar vreți să vedeți plăcuța mașinii.
+          </div>
+        </div>
       </div>
     `;
 
@@ -57,6 +68,11 @@ class VehiculeCardEditor extends HTMLElement {
         this._config = { ...this._config, sectiuni: checked };
         this._fireChanged();
       });
+    });
+
+    this.querySelector('#vc-show-plate').addEventListener('change', (e) => {
+      this._config = { ...this._config, show_plate_in_separators: e.target.checked };
+      this._fireChanged();
     });
   }
 

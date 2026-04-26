@@ -22,12 +22,15 @@ function _stackWrapper(cards) {
   };
 }
 
-function _separator(name) {
+function _separator(name, plate) {
+  // Dacă utilizatorul a activat `show_plate_in_separators` și avem nr. înmatriculare,
+  // suffix-ul apare după titlu (util când ascunzi secțiunea „informații" și pierzi plăcuța).
+  var displayName = (plate && typeof plate === 'string' && plate.trim()) ? (name + ' · ' + plate.trim()) : name;
   return {
     type: 'custom:bubble-card',
     card_type: 'separator',
     icon: '',
-    name: name,
+    name: displayName,
     sub_button: { main: [], bottom: [] }
   };
 }
@@ -47,7 +50,7 @@ function _headerCard(entity, customField) {
         { background: 'transparent' },
         { border: 'none' },
         { 'box-shadow': 'none' },
-        { padding: '22px 22px 30px' }
+        { padding: '16px 18px 12px' }
       ],
       grid: [
         { 'grid-template-areas': '"header"' },
@@ -73,7 +76,7 @@ function _footerCard(entity, customField) {
         { background: 'transparent' },
         { border: 'none' },
         { 'box-shadow': 'none' },
-        { padding: '0 22px 16px' }
+        { padding: '0 18px 10px' }
       ],
       grid: [
         { 'grid-template-areas': '"info"' },
@@ -100,7 +103,7 @@ function _indicatorZile(entity, icon, name) {
     styles: {
       card: [
         { 'border-radius': '10px' },
-        { padding: '20px 8px' },
+        { padding: '14px 8px' },
         { 'box-shadow': 'none' },
         { border: 'none' }
       ],
@@ -138,7 +141,7 @@ function _indicatorZileLeasing(entity) {
     styles: {
       card: [
         { 'border-radius': '10px' },
-        { padding: '20px 8px' },
+        { padding: '14px 8px' },
         { 'box-shadow': 'none' },
         { border: 'none' }
       ],
@@ -176,7 +179,7 @@ function _indicatorKm(entity, icon, name, pragAtentie, pragPericol) {
     styles: {
       card: [
         { 'border-radius': '10px' },
-        { padding: '20px 8px' },
+        { padding: '14px 8px' },
         { 'box-shadow': 'none' },
         { border: 'none' }
       ],
@@ -203,7 +206,7 @@ function _indicatorKm(entity, icon, name, pragAtentie, pragPericol) {
 // 1. INFORMAȚII VEHICUL
 // ══════════════════════════════════════════
 
-function configInformatii(prefix, hass) {
+function configInformatii(prefix, hass, plate) {
   var p = prefix;
   var eid = resolveIfExists(hass, p, 'informatii');
   if (!eid) return null;
@@ -213,7 +216,7 @@ function configInformatii(prefix, hass) {
   return {
     type: 'vertical-stack',
     cards: [
-      _separator('VEHICUL ' + p.toUpperCase()),
+      _separator('VEHICUL ' + p.toUpperCase(), plate),
       _stackWrapper([
         // Header
         _headerCard(eid, "[[[\n            var attr = entity.attributes || {};\n            var marca = attr['Marcă'] || attr['Make'] || '';\n            var model = attr['Model'] || '';\n            var titlu = (marca + ' ' + model).trim() || entity.state || '—';\n            var combustibil = attr['Combustibil'] || attr['Fuel type'] || '';\n            var an = attr['An fabricație'] || attr['Year of manufacture'] || '';\n            var motorizare = attr['Motorizare'] || attr['Engine type'] || '';\n            var detail = [combustibil, motorizare, an].filter(Boolean).join(' · ');\n            return '<div style=\"display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;\"><div style=\"width:56px;height:56px;border-radius:14px;background:rgba(33,150,243,0.15);display:flex;align-items:center;justify-content:center;\"><ha-icon icon=mdi:car style=\"width:28px;height:28px;color:rgb(33,150,243);\"></ha-icon></div><div style=\"text-align:right;\"><div style=\"font-size:13px;color:var(--secondary-text-color);\">Vehicul</div><div style=\"font-size:22px;font-weight:700;color:rgb(33,150,243);line-height:1.2;\">' + titlu + '</div><div style=\"font-size:13px;color:var(--secondary-text-color);opacity:0.8;margin-top:2px;\">' + detail + '</div></div></div>';\n          ]]]"),
@@ -236,7 +239,7 @@ function configInformatii(prefix, hass) {
               label: "[[[\n                var v = entity.state;\n                return v ? parseInt(v).toLocaleString('ro-RO') + ' km' : '—';\n              ]]]",
               tap_action: { action: 'more-info' },
               styles: {
-                card: [{ 'border-radius': '10px' }, { padding: '20px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
+                card: [{ 'border-radius': '10px' }, { padding: '14px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
                 icon: [{ width: '24px' }, { color: 'rgb(33,150,243)' }],
                 name: [{ 'font-size': '13px' }, { color: 'var(--secondary-text-color)' }, { 'margin-top': '4px' }],
                 label: [{ 'font-size': '15px' }, { 'font-weight': '600' }, { color: 'rgb(33,150,243)' }]
@@ -255,7 +258,7 @@ function configInformatii(prefix, hass) {
               label: "[[[\n                var cp = entity.attributes['Putere (CP)'] || entity.attributes['Power (HP)'];\n                var kw = entity.attributes['Putere (kW)'] || entity.attributes['Power (kW)'];\n                if (cp) return cp + ' CP';\n                if (kw) return kw + ' kW';\n                return '—';\n              ]]]",
               tap_action: { action: 'more-info' },
               styles: {
-                card: [{ 'border-radius': '10px' }, { padding: '20px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
+                card: [{ 'border-radius': '10px' }, { padding: '14px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
                 icon: [{ width: '24px' }, { color: 'rgb(255,152,0)' }],
                 name: [{ 'font-size': '13px' }, { color: 'var(--secondary-text-color)' }, { 'margin-top': '4px' }],
                 label: [{ 'font-size': '15px' }, { 'font-weight': '600' }, { color: 'rgb(255,152,0)' }]
@@ -274,7 +277,7 @@ function configInformatii(prefix, hass) {
               label: "[[[\n                var cc = entity.attributes['Capacitate cilindrică (cm³)'] || entity.attributes['Engine displacement (cm³)'];\n                return cc ? cc + ' cm³' : '—';\n              ]]]",
               tap_action: { action: 'more-info' },
               styles: {
-                card: [{ 'border-radius': '10px' }, { padding: '20px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
+                card: [{ 'border-radius': '10px' }, { padding: '14px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
                 icon: [{ width: '24px' }, { color: 'rgb(158,158,158)' }],
                 name: [{ 'font-size': '13px' }, { color: 'var(--secondary-text-color)' }, { 'margin-top': '4px' }],
                 label: [{ 'font-size': '15px' }, { 'font-weight': '600' }, { color: 'rgb(158,158,158)' }]
@@ -283,7 +286,7 @@ function configInformatii(prefix, hass) {
           ]
         },
         // Footer
-        _footerCard(eid, "[[[\n            var attr = entity.attributes || {};\n            var vin = attr['VIN'] || '—';\n            var civ = attr['Serie CIV'] || attr['Vehicle identity card serial (CIV)'] || '—';\n            var nr = attr['Nr. înmatriculare'] || attr['License plate number'] || '—';\n            return '<div style=\"padding-top:10px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:20px;\"><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:car-info style=\"width:13px;height:13px;color:#888;\"></ha-icon>VIN: ' + vin + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:card-account-details style=\"width:13px;height:13px;color:#888;\"></ha-icon>CIV: ' + civ + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:numeric style=\"width:13px;height:13px;color:#888;\"></ha-icon>' + nr + '</span></div>';\n          ]]]")
+        _footerCard(eid, "[[[\n            var attr = entity.attributes || {};\n            var vin = attr['VIN'] || '—';\n            var civ = attr['Serie CIV'] || attr['Vehicle identity card serial (CIV)'] || '—';\n            var nr = attr['Nr. înmatriculare'] || attr['License plate number'] || '—';\n            return '<div style=\"padding-top:6px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:6px;\"><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:car-info style=\"width:13px;height:13px;color:#888;\"></ha-icon>VIN: ' + vin + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:card-account-details style=\"width:13px;height:13px;color:#888;\"></ha-icon>CIV: ' + civ + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:numeric style=\"width:13px;height:13px;color:#888;\"></ha-icon>' + nr + '</span></div>';\n          ]]]")
       ])
     ]
   };
@@ -294,7 +297,7 @@ function configInformatii(prefix, hass) {
 // 2. DOCUMENTE — dynamic grid (only existing entities)
 // ══════════════════════════════════════════
 
-function configDocumente(prefix, hass) {
+function configDocumente(prefix, hass, plate) {
   var p = prefix;
   var rcaEid = resolveIfExists(hass, p, 'rca');
   if (!rcaEid) return null;
@@ -323,7 +326,7 @@ function configDocumente(prefix, hass) {
 
   var stackCards = [
     // Header RCA
-    _headerCard(rcaEid, "[[[\n          var attr = entity.attributes || {};\n          var zile = parseInt(entity.state) || 0;\n          var companie = attr['Companie'] || attr['Insurance company'] || '';\n          var polita = attr['Număr poliță'] || attr['Policy number'] || '';\n          var valid = zile >= 0;\n          var color = valid ? (zile < 30 ? '#FF9800' : '#4CAF50') : '#EF4F1A';\n          var detail = companie;\n          if (polita) detail += (detail ? ' · Poliță: ' : 'Poliță: ') + polita;\n          var bgColor = valid ? (zile < 30 ? 'rgba(255,152,0,0.15)' : 'rgba(76,175,80,0.15)') : 'rgba(239,79,26,0.15)';\n          var iconName = valid ? 'mdi:shield-car' : 'mdi:shield-alert';\n          return '<div style=\"display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;\"><div style=\"width:56px;height:56px;border-radius:14px;background:' + bgColor + ';display:flex;align-items:center;justify-content:center;\"><ha-icon icon=' + iconName + ' style=\"width:28px;height:28px;color:' + color + ';\"></ha-icon></div><div style=\"text-align:right;\"><div style=\"font-size:13px;color:var(--secondary-text-color);\">Asigurare RCA</div><div style=\"font-size:22px;font-weight:700;color:' + color + ';line-height:1.2;\">' + (valid ? zile + ' zile rămase' : 'EXPIRAT') + '</div><div style=\"font-size:13px;color:var(--secondary-text-color);opacity:0.8;margin-top:2px;\">' + detail + '</div></div></div>';\n        ]]]")
+    _headerCard(rcaEid, "[[[\n          var attr = entity.attributes || {};\n          var zile = parseInt(entity.state) || 0;\n          var companie = attr['Companie'] || attr['Insurance company'] || '';\n          var polita = attr['Număr poliță'] || attr['Policy number'] || '';\n          var valid = zile >= 0;\n          var color = valid ? (zile < 30 ? '#FF9800' : '#4CAF50') : '#EF4F1A';\n          var parts = [];\n          if (companie) parts.push(companie);\n          if (polita) parts.push('Poliță: ' + polita);\n          var detail = parts.join('<br>');\n          var bgColor = valid ? (zile < 30 ? 'rgba(255,152,0,0.15)' : 'rgba(76,175,80,0.15)') : 'rgba(239,79,26,0.15)';\n          var iconName = valid ? 'mdi:shield-car' : 'mdi:shield-alert';\n          return '<div style=\"display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;\"><div style=\"width:56px;height:56px;border-radius:14px;background:' + bgColor + ';display:flex;align-items:center;justify-content:center;\"><ha-icon icon=' + iconName + ' style=\"width:28px;height:28px;color:' + color + ';\"></ha-icon></div><div style=\"text-align:right;min-width:0;\"><div style=\"font-size:13px;color:var(--secondary-text-color);\">Asigurare RCA</div><div style=\"font-size:22px;font-weight:700;color:' + color + ';line-height:1.2;\">' + (valid ? zile + ' zile rămase' : 'EXPIRAT') + '</div><div style=\"font-size:13px;color:var(--secondary-text-color);opacity:0.8;margin-top:2px;line-height:1.4;word-break:break-word;\">' + detail + '</div></div></div>';\n        ]]]")
   ];
 
   // Adaugă grid doar dacă are carduri
@@ -338,13 +341,13 @@ function configDocumente(prefix, hass) {
 
   // Footer
   stackCards.push(
-    _footerCard(rcaEid, "[[[\n          var attr = entity.attributes || {};\n          var emitere = attr['Data emitere'] || attr['Issue date'] || '—';\n          var expirare = attr['Data expirare'] || attr['Expiry date'] || '—';\n          var cost = attr['Cost (RON)'];\n          var costText = cost ? cost + ' RON' : '—';\n          return '<div style=\"padding-top:10px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:20px;\"><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:calendar-arrow-right style=\"width:13px;height:13px;color:#888;\"></ha-icon>Emis: ' + emitere + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:calendar-alert style=\"width:13px;height:13px;color:#888;\"></ha-icon>Expiră: ' + expirare + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:currency-eur style=\"width:13px;height:13px;color:#888;\"></ha-icon>Cost: ' + costText + '</span></div>';\n        ]]]")
+    _footerCard(rcaEid, "[[[\n          var attr = entity.attributes || {};\n          var emitere = attr['Data emitere'] || attr['Issue date'] || '—';\n          var expirare = attr['Data expirare'] || attr['Expiry date'] || '—';\n          var cost = attr['Cost (RON)'];\n          var costText = cost ? cost + ' RON' : '—';\n          return '<div style=\"padding-top:6px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:6px;\"><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:calendar-arrow-right style=\"width:13px;height:13px;color:#888;\"></ha-icon>Emis: ' + emitere + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:calendar-alert style=\"width:13px;height:13px;color:#888;\"></ha-icon>Expiră: ' + expirare + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:currency-eur style=\"width:13px;height:13px;color:#888;\"></ha-icon>Cost: ' + costText + '</span></div>';\n        ]]]")
   );
 
   return {
     type: 'vertical-stack',
     cards: [
-      _separator('DOCUMENTE'),
+      _separator('DOCUMENTE', plate),
       _stackWrapper(stackCards)
     ]
   };
@@ -355,7 +358,7 @@ function configDocumente(prefix, hass) {
 // 3. MENTENANȚĂ — dynamic grid
 // ══════════════════════════════════════════
 
-function configMentenanta(prefix, hass) {
+function configMentenanta(prefix, hass, plate) {
   var p = prefix;
   var uleiEid = resolveIfExists(hass, p, 'revizie_ulei');
   if (!uleiEid) return null;
@@ -401,7 +404,7 @@ function configMentenanta(prefix, hass) {
       label: "[[[\n            var v = parseInt(entity.state);\n            if (isNaN(v)) return '—';\n            return v + ' luni';\n          ]]]",
       tap_action: { action: 'more-info' },
       styles: {
-        card: [{ 'border-radius': '10px' }, { padding: '20px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
+        card: [{ 'border-radius': '10px' }, { padding: '14px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
         icon: [
           { width: '34px' },
           { color: "[[[\n                var v = parseInt(entity.state) || 0;\n                if (v > 48) return 'rgb(239,79,26)';\n                if (v > 36) return 'rgb(255,152,0)';\n                return 'rgb(76,175,80)';\n              ]]]" }
@@ -431,7 +434,7 @@ function configMentenanta(prefix, hass) {
       label: "[[[\n            var sezon = entity.state || '—';\n            var recomandat = entity.attributes['Sezon recomandat'] || entity.attributes['Recommended season'] || '';\n            if (sezon.toLowerCase() === recomandat.toLowerCase()) return sezon + ' ✓';\n            return sezon + ' (rec: ' + recomandat + ')';\n          ]]]",
       tap_action: { action: 'more-info' },
       styles: {
-        card: [{ 'border-radius': '10px' }, { padding: '20px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
+        card: [{ 'border-radius': '10px' }, { padding: '14px 8px' }, { 'box-shadow': 'none' }, { border: 'none' }],
         icon: [
           { width: '34px' },
           { color: "[[[\n                var sezon = entity.state || '';\n                var recomandat = entity.attributes['Sezon recomandat'] || entity.attributes['Recommended season'] || '';\n                return sezon.toLowerCase() === recomandat.toLowerCase() ? 'rgb(76,175,80)' : 'rgb(255,152,0)';\n              ]]]" }
@@ -457,13 +460,13 @@ function configMentenanta(prefix, hass) {
 
   // Footer
   stackCards.push(
-    _footerCard(uleiEid, "[[[\n          var attr = entity.attributes || {};\n          var kmCurent = attr['Km curent'] || attr['Current mileage'];\n          var kmUrm = attr['Km următoarea revizie'] || attr['Km at next service'];\n          var dataUltima = attr['Data ultima revizie'] || attr['Last service date'] || '—';\n          return '<div style=\"padding-top:10px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:20px;\"><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:oil style=\"width:13px;height:13px;color:#888;\"></ha-icon>Ultima: ' + dataUltima + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:map-marker-distance style=\"width:13px;height:13px;color:#888;\"></ha-icon>Curent: ' + (kmCurent ? parseInt(kmCurent).toLocaleString('ro-RO') + ' km' : '—') + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:flag-checkered style=\"width:13px;height:13px;color:#888;\"></ha-icon>Următoarea: ' + (kmUrm ? parseInt(kmUrm).toLocaleString('ro-RO') + ' km' : '—') + '</span></div>';\n        ]]]")
+    _footerCard(uleiEid, "[[[\n          var attr = entity.attributes || {};\n          var kmCurent = attr['Km curent'] || attr['Current mileage'];\n          var kmUrm = attr['Km următoarea revizie'] || attr['Km at next service'];\n          var dataUltima = attr['Data ultima revizie'] || attr['Last service date'] || '—';\n          return '<div style=\"padding-top:6px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:6px;\"><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:oil style=\"width:13px;height:13px;color:#888;\"></ha-icon>Ultima: ' + dataUltima + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:map-marker-distance style=\"width:13px;height:13px;color:#888;\"></ha-icon>Curent: ' + (kmCurent ? parseInt(kmCurent).toLocaleString('ro-RO') + ' km' : '—') + '</span><span style=\"display:flex;align-items:center;gap:4px;font-size:11px;color:var(--secondary-text-color);\"><ha-icon icon=mdi:flag-checkered style=\"width:13px;height:13px;color:#888;\"></ha-icon>Următoarea: ' + (kmUrm ? parseInt(kmUrm).toLocaleString('ro-RO') + ' km' : '—') + '</span></div>';\n        ]]]")
   );
 
   return {
     type: 'vertical-stack',
     cards: [
-      _separator('MENTENANȚĂ'),
+      _separator('MENTENANȚĂ', plate),
       _stackWrapper(stackCards)
     ]
   };
@@ -474,7 +477,7 @@ function configMentenanta(prefix, hass) {
 // 4. ECHIPAMENT OBLIGATORIU — dynamic
 // ══════════════════════════════════════════
 
-function configEchipament(prefix, hass) {
+function configEchipament(prefix, hass, plate) {
   var p = prefix;
   var gridCards = [];
 
@@ -495,7 +498,7 @@ function configEchipament(prefix, hass) {
           { background: 'transparent' },
           { border: 'none' },
           { 'box-shadow': 'none' },
-          { padding: '20px 8px' }
+          { padding: '14px 8px' }
         ],
         grid: [
           { 'grid-template-areas': '"content"' },
@@ -518,7 +521,7 @@ function configEchipament(prefix, hass) {
   return {
     type: 'vertical-stack',
     cards: [
-      _separator('ECHIPAMENT OBLIGATORIU'),
+      _separator('ECHIPAMENT OBLIGATORIU', plate),
       _stackWrapper([
         {
           type: 'grid',
@@ -536,7 +539,7 @@ function configEchipament(prefix, hass) {
 // 5. GRAFIC KILOMETRAJ
 // ══════════════════════════════════════════
 
-function configGrafic(prefix, hass) {
+function configGrafic(prefix, hass, plate) {
   var p = prefix;
   var kmEid = resolveIfExists(hass, p, 'kilometraj');
   if (!kmEid) return null;
@@ -544,7 +547,7 @@ function configGrafic(prefix, hass) {
   return {
     type: 'vertical-stack',
     cards: [
-      _separator('GRAFIC KILOMETRAJ'),
+      _separator('GRAFIC KILOMETRAJ', plate),
       _stackWrapper([
         // Header km curent
         {
@@ -563,7 +566,7 @@ function configGrafic(prefix, hass) {
               { background: 'transparent' },
               { border: 'none' },
               { 'box-shadow': 'none' },
-              { padding: '22px 22px 34px' }
+              { padding: '16px 18px 12px' }
             ],
             grid: [
               { 'grid-template-areas': '"header"' },

@@ -6,8 +6,9 @@
  *
  * Configurare YAML:
  *   type: custom:vehicule-card
- *   vehicul: b123abc       # opțional — auto-detectare dacă lipsește
- *   sectiuni:               # opțional — toate dacă lipsesc
+ *   vehicul: b123abc                  # opțional — auto-detectare dacă lipsește
+ *   show_plate_in_separators: true    # opțional — adaugă nr. înmatriculare după titlul fiecărei secțiuni
+ *   sectiuni:                          # opțional — toate dacă lipsesc
  *     - informatii
  *     - documente
  *     - mentenanta
@@ -33,6 +34,7 @@ class VehiculeCard extends HTMLElement {
     return {
       vehicul: '',
       sectiuni: ['informatii'],
+      show_plate_in_separators: false,
     };
   }
 
@@ -49,6 +51,7 @@ class VehiculeCard extends HTMLElement {
     this._config = {
       vehicul: config.vehicul || '',
       sectiuni: config.sectiuni || [...SECTIUNI],
+      show_plate_in_separators: config.show_plate_in_separators === true,
     };
     this._rendered = false;
     if (this._hass) this._buildCards();
@@ -91,13 +94,27 @@ class VehiculeCard extends HTMLElement {
       prefix = vehicule[0];
     }
 
+    // Citește nr. înmatriculare doar dacă opțiunea e activă — folosit ca suffix
+    // în titlul fiecărui separator (util când utilizatorul ascunde secțiunea
+    // „informații" dar vrea să vadă plăcuța în continuare).
+    var plate = '';
+    if (this._config.show_plate_in_separators) {
+      var infoEid = resolveEntityId(this._hass, prefix, 'informatii');
+      var infoState = this._hass.states[infoEid];
+      if (infoState && infoState.attributes) {
+        plate = infoState.attributes['Nr. înmatriculare']
+             || infoState.attributes['License plate number']
+             || '';
+      }
+    }
+
     // Generează configurațiile pentru fiecare secțiune activă
     var configs = [];
     var sectiuni = this._config.sectiuni;
     for (var i = 0; i < sectiuni.length; i++) {
       var generator = CONFIG_GENERATORS[sectiuni[i]];
       if (generator) {
-        var cfg = generator(prefix, this._hass);
+        var cfg = generator(prefix, this._hass, plate);
         if (cfg) configs.push(cfg);
       }
     }
