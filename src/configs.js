@@ -25,7 +25,18 @@ function _stackWrapper(cards) {
 function _separator(name, plate) {
   // Dacă utilizatorul a activat `show_plate_in_separators` și avem nr. înmatriculare,
   // suffix-ul apare după titlu (util când ascunzi secțiunea „informații" și pierzi plăcuța).
-  var displayName = (plate && typeof plate === 'string' && plate.trim()) ? (name + ' · ' + plate.trim()) : name;
+  // Edge-case: separatorul „VEHICUL <prefix>" conține deja plăcuța dacă prefix-ul e
+  // derivat din plăcuță (cazul tipic). Comparăm normalizat (uppercase, fără `-`/spații)
+  // și sărim peste suffix dacă numele deja conține plăcuța → evităm duplicate.
+  var displayName = name;
+  if (plate && typeof plate === 'string' && plate.trim()) {
+    var plateClean = plate.trim();
+    var nameNorm = name.toUpperCase().replace(/[-\s]/g, '');
+    var plateNorm = plateClean.toUpperCase().replace(/[-\s]/g, '');
+    if (nameNorm.indexOf(plateNorm) === -1) {
+      displayName = name + ' · ' + plateClean;
+    }
+  }
   return {
     type: 'custom:bubble-card',
     card_type: 'separator',
