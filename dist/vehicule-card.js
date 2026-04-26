@@ -1,5 +1,5 @@
 /**
- * Vehicule Card v1.2.2
+ * Vehicule Card v1.3.0
  * https://github.com/cnecrea/vehicule-card
  * Meta-card pentru integrarea Vehicule — Home Assistant
  * Necesită: button-card, stack-in-card, bubble-card, card-mod, mini-graph-card
@@ -10,7 +10,7 @@
 /**
  * Constante — versiune, secțiuni disponibile.
  */
-const VEHICULE_CARD_VERSION = '1.2.2';
+const VEHICULE_CARD_VERSION = '1.3.0';
 
 // Secțiunile disponibile
 const SECTIUNI = ['informatii', 'documente', 'mentenanta', 'echipament', 'grafic'];
